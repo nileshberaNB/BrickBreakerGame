@@ -1,6 +1,7 @@
 package demogame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -14,6 +15,7 @@ import javax.swing.Timer;
 
 public class GamePlay extends JPanel implements ActionListener, KeyListener{
     private boolean play=false;
+    private int score=0;
     private int totalBrick=21;
     private Timer timer;
     private int delay=8;
@@ -56,6 +58,38 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener{
         g.setColor(Color.red);
         g.fillOval(ballposX,ballposY,20,20);
 
+        //score
+        g.setColor(Color.green);
+        g.setFont(new Font("serif", Font.BOLD, 20));
+        g.drawString("Score: " + score,550,30);
+
+        //Game Over 
+        if(ballposY >=570){
+            play=false;
+            ballXdir=0;
+            ballYdir=0;
+
+            g.setColor(Color.green);
+            g.setFont(new Font("serif", Font.BOLD, 30));
+            g.drawString("GAME OVER!! Score : "+score,200,300);
+
+            g.setFont(new Font("serif", Font.BOLD, 25));
+            g.drawString("Press Enter to Restart Game...",250,350);
+        }
+        //Game Win
+        if(totalBrick <= 0) {
+            play=false;
+            ballXdir=0;
+            ballYdir=0;
+
+            g.setColor(Color.green);
+            g.setFont(new Font("serif", Font.BOLD, 30));
+            g.drawString("CONGRATULATIONS!!You Won.., Score :"+score,200,300);
+
+            g.setFont(new Font("serif", Font.BOLD, 25));
+            g.drawString("Press Enter to Restart Game...",250,350);
+        }
+
 
     }
     private void moveLeft() {
@@ -85,6 +119,19 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener{
             else
             moveRight();
         
+        }
+        if(e.getKeyCode()==KeyEvent.VK_ENTER){
+            if(!play){
+                score=0;
+                totalBrick=21;
+                ballposX=120;
+                ballposY=350;
+                ballXdir=-1;
+                ballYdir=-2;
+                playerX=320;
+
+                map=new MapGenerator(3,7);
+            }
         }
         repaint();
     }
@@ -123,6 +170,7 @@ public class GamePlay extends JPanel implements ActionListener, KeyListener{
                     if(ballrect.intersects(brickrect)){
                         map.setBrick(0, i, j);
                         totalBrick--;
+                        score+=5;
 
                         if(ballposX+19<=brickXpos||ballposX+1>=brickXpos+width){
                             ballXdir=-ballXdir;
